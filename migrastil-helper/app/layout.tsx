@@ -6,6 +6,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+
 export const metadata: Metadata = {
   title: "Numbered Link List",
   description: "Create numbered lists of links and copy them all",
