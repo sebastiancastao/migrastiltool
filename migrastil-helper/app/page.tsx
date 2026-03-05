@@ -103,6 +103,10 @@ export default function Home() {
     }
   };
 
+  const duplicateValues = new Set(
+    items.filter((item, i) => item.trim() !== '' && items.indexOf(item) !== i)
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -117,29 +121,43 @@ export default function Home() {
           </div>
 
           <div className="space-y-3 mb-6">
-            {items.map((item, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <span className="text-lg font-semibold text-gray-700 dark:text-gray-300 min-w-[2rem]">
-                  {index + 1}.
-                </span>
-                <input
-                  ref={(el) => { inputRefs.current[index] = el; }}
-                  type="text"
-                  value={item}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  placeholder="Paste link here..."
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none transition-all"
-                />
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                  title="Delete item"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+            {items.map((item, index) => {
+              const isDuplicate = item.trim() !== '' && duplicateValues.has(item);
+              return (
+                <div key={index} className="flex items-center gap-3">
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-300 min-w-[2rem]">
+                    {index + 1}.
+                  </span>
+                  <div className="flex-1 relative">
+                    <input
+                      ref={(el) => { inputRefs.current[index] = el; }}
+                      type="text"
+                      value={item}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      placeholder="Paste link here..."
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white outline-none transition-all ${
+                        isDuplicate
+                          ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20'
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    />
+                    {isDuplicate && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-yellow-500 text-xs font-semibold">
+                        duplicate
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(index)}
+                    className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                    title="Delete item"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex gap-3">
